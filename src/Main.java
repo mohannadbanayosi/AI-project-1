@@ -10,14 +10,11 @@ public class Main {
 	static int dx[] = new int[] { 1, -1, 0, 0 };
 	static int dy[] = new int[] { 0, 0, 1, -1 };
 
-	public static boolean is_target(char[][] grid, String grid_shape) {
-		int count = 0;
-		for(int i = 0 ; i < grid.length ; ++i)
-			for(int j = 0 ; j < grid[0].length ; ++j)
-				if(grid[i][j] == 'r')
-					++count;
+	public static boolean is_target(state x) {
+		int count = x.numberOfParts();
 		return count == 1 ? true : false;
 	}
+	
 	public static void display(char [][] grid){
 		for (int i =0 ; i < grid.length; i++){
 			System.out.println();
@@ -55,7 +52,9 @@ public class Main {
 									new_grid[ii][jj] = grid[ii][jj];
 							new_grid[i][j] = '.';
 							new_grid[curi][curj] = 'r';
-							new_states.add(new state(new_grid, cur_cost + cost));
+							state x = new state(new_grid, cur_cost + cost);
+							x.partAttached();
+							new_states.add(x);
 							System.out.println();
 							System.out.println("==============found r===============");
 							display(new_grid);
@@ -90,7 +89,7 @@ public class Main {
 			String grid_shape = current.toString();
 			//System.out.println(grid_shape);
 			int current_cost = current.cost;
-			if (is_target(grid, grid_shape)) {
+			if (is_target(current)) {
 				return current_cost;
 			}
 			if (vis.contains(grid_shape))
@@ -116,7 +115,7 @@ public class Main {
 			String grid_shape = current.toString();
 			System.out.println(grid_shape);
 			int current_cost = current.cost;
-			if (is_target(grid, grid_shape)) {
+			if (is_target(current)) {
 				return current_cost;
 			}
 			if (vis.contains(grid_shape))
@@ -138,29 +137,30 @@ public class Main {
 	// #...
 	// .r#.
 	public static void main(String[] args) throws Exception {
-//		char[][] test_board = new char[4][4];
-//		test_board[0][0] = '.';
-//		test_board[0][1] = '.';
-//		test_board[0][2] = '#';
-//		test_board[0][3] = '.';
-//		test_board[1][0] = 'r';
-//		test_board[1][1] = '.';
-//		test_board[1][2] = '.';
-//		test_board[1][3] = '#';
-//		test_board[2][0] = '#';
-//		test_board[2][1] = '.';
-//		test_board[2][2] = '.';
-//		test_board[2][3] = '.';
-//		test_board[3][0] = '.';
-//		test_board[3][1] = 'r';
-//		test_board[3][2] = '#';
-//		test_board[3][3] = '.';
-		Grid test = new Grid();
-		test.display();
+		char[][] test_board = new char[4][4];
+		test_board[0][0] = '.';
+		test_board[0][1] = '.';
+		test_board[0][2] = '#';
+		test_board[0][3] = '.';
+		test_board[1][0] = 'r';
+		test_board[1][1] = '.';
+		test_board[1][2] = '.';
+		test_board[1][3] = '#';
+		test_board[2][0] = '#';
+		test_board[2][1] = 'r';
+		test_board[2][2] = '.';
+		test_board[2][3] = '.';
+		test_board[3][0] = '.';
+		test_board[3][1] = '.';
+		test_board[3][2] = '#';
+		test_board[3][3] = '.';
+		display(test_board);
+//		Grid test = new Grid();
+//		test.display();
 		System.out.println();
 		System.out.println("=====================");
-		state start = new state(test.grid, 0);
+		state start = new state(test_board, 0);
 		int ans = bfs(start);
-		System.out.println(ans);
+		System.out.println("total cost = " + ans);
 	}
 }
