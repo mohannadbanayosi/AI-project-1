@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Stack;
 
 class state {
 	char grid[][];
@@ -107,6 +108,34 @@ public class Main {
 				bfs_queue.offer(s);
 		}
 		return -1;
+	}
+	
+	public static int dfs(state start) {
+		
+		Stack dfs_stack = new Stack();
+		dfs_stack.push(start);
+		HashSet<String> vis = new HashSet<String>();
+		while (!dfs_stack.isEmpty()) {
+			state current = (state) dfs_stack.pop();
+			char[][] grid = current.grid;
+			String grid_shape = current.toString();
+			System.out.println(grid_shape);
+			int current_cost = current.cost;
+			if (is_target(grid, grid_shape)) {
+				return current_cost;
+			}
+			if (vis.contains(grid_shape))
+				continue;
+			vis.add(grid_shape);
+			// moves
+			ArrayList<state> new_states = move(current);
+			System.out.println("new states " + new_states.size());
+			for (state s : new_states)
+				dfs_stack.push(s);
+		}
+		
+		return -1;
+		
 	}
 
 	// ..#.
