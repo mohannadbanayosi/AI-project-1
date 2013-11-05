@@ -22,6 +22,7 @@ public class Main {
 				System.out.print(grid[i][j]);
 			}
 		}
+		System.out.println();
 	}
 
 	public static ArrayList<state> move(state current) {
@@ -58,6 +59,7 @@ public class Main {
 							System.out.println();
 							System.out.println("==============found r===============");
 							display(new_grid);
+							System.out.println("*********************************************");
 						}
 						if (nxt == '#') {
 							// new move collided with obstacle
@@ -71,6 +73,7 @@ public class Main {
 							System.out.println();
 							System.out.println("==============found #===============");
 							display(new_grid);
+							System.out.println("*********************************************");
 						}
 					}
 				}
@@ -106,7 +109,7 @@ public class Main {
 	
 	public static int dfs(state start) {
 		
-		Stack dfs_stack = new Stack();
+		Stack<state> dfs_stack = new Stack<state>();
 		dfs_stack.push(start);
 		HashSet<String> vis = new HashSet<String>();
 		while (!dfs_stack.isEmpty()) {
@@ -126,6 +129,43 @@ public class Main {
 			System.out.println("new states " + new_states.size());
 			for (state s : new_states)
 				dfs_stack.push(s);
+		}
+		
+		return -1;
+		
+	}
+	
+	public static int uniform(state start) {
+		
+		ArrayList<state> uniformQ = new ArrayList<state>();
+		uniformQ.add(start);
+		HashSet<String> vis = new HashSet<String>();
+		while (!uniformQ.isEmpty()) {
+			//get the index of the state with minimum cost
+			int minCost = 0;
+			for (int i = 1;i < uniformQ.size() ; i++){
+				if(uniformQ.get(i).cost < minCost)
+					minCost = i;
+			}
+				
+			state current = (state) uniformQ.get(minCost);
+			uniformQ.remove(minCost);
+			
+			char[][] grid = current.grid;
+			String grid_shape = current.toString();
+			//System.out.println(grid_shape);
+			int current_cost = current.cost;
+			if (is_target(current)) {
+				return current_cost;
+			}
+			if (vis.contains(grid_shape))
+				continue;
+			vis.add(grid_shape);
+			// moves
+			ArrayList<state> new_states = move(current);
+			//System.out.println("new states " + new_states.size());
+			for (state s : new_states)
+				uniformQ.add(s);
 		}
 		
 		return -1;
@@ -160,7 +200,7 @@ public class Main {
 		System.out.println();
 		System.out.println("=====================");
 		state start = new state(test_board, 0);
-		int ans = bfs(start);
+		int ans = uniform(start);
 		System.out.println("total cost = " + ans);
 	}
 }
