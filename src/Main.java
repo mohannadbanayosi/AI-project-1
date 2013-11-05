@@ -13,6 +13,9 @@ public class Main {
 
 	public static boolean is_target(state x) {
 		int count = x.numberOfParts();
+		System.out.println("*********************************************");
+		System.out.println(count);
+		System.out.println("*********************************************");
 		return count == 1 ? true : false;
 	}
 	
@@ -81,7 +84,7 @@ public class Main {
 								cost++;
 							}
 						}
-						System.out.println("cost" +cost);
+						//System.out.println("cost" +cost);
 						if (curi + dx[k] < 0 || curi + dx[k] >= grid.length || curj + dy[k] < 0|| curj + dy[k] >= grid[0].length)
 							continue;
 						char nxt = grid[curi + dx[k]][curj + dy[k]];
@@ -107,10 +110,10 @@ public class Main {
 							state x = new state(new_grid, cur_cost + cost);
 							x.partAttached();
 							new_states.add(x);
-							System.out.println();
+							//System.out.println();
 							System.out.println("==============found r===============");
-							display(new_grid);
-							System.out.println("*********************************************");
+							//display(new_grid);
+							//System.out.println("*********************************************");
 						}
 						if (nxt == '#') {
 							// new move collided with obstacle
@@ -121,10 +124,10 @@ public class Main {
 							new_grid[i][j] = '.';
 							new_grid[curi][curj] = 'r';
 							new_states.add(new state(new_grid, cur_cost + cost));
-							System.out.println();
-							System.out.println("==============found #===============");
-							display(new_grid);
-							System.out.println("*********************************************");
+							//System.out.println();
+							//System.out.println("==============found #===============");
+							//display(new_grid);
+							//System.out.println("*********************************************");
 						}
 					}
 				}
@@ -132,6 +135,7 @@ public class Main {
 		}
 		return new_states;
 	}
+	
 
 	public static int bfs(state start) {
 		Queue<state> bfs_queue = new LinkedList<state>();
@@ -141,7 +145,7 @@ public class Main {
 			state current = bfs_queue.poll();
 			char[][] grid = current.grid;
 			String grid_shape = current.toString();
-			//System.out.println(grid_shape);
+			System.out.println(grid_shape);
 			int current_cost = current.cost;
 			if (is_target(current)) {
 				return current_cost;
@@ -178,8 +182,8 @@ public class Main {
 			// moves
 			ArrayList<state> new_states = move(current);
 			System.out.println("new states " + new_states.size());
-			for (state s : new_states)
-				dfs_stack.push(s);
+			for (int i = new_states.size()-1; i >= 0; i--)
+				dfs_stack.push(new_states.get(i));
 		}
 		
 		return -1;
@@ -222,6 +226,140 @@ public class Main {
 		return -1;
 		
 	}
+	public static int greedy(state state){
+		
+		ArrayList<state> priorityQueue = new ArrayList<state>();
+		state.heuristic = heurstic1(state.grid);
+		//System.out.println("wth faksjd");
+		priorityQueue.add(state);
+		HashSet<String> vis = new HashSet<String>();
+		
+		while(!priorityQueue.isEmpty()){
+			int currentIndex = bestOptionGreedy(priorityQueue);
+			//System.out.println(currentIndex);
+			state current = priorityQueue.get(currentIndex);
+			priorityQueue.remove(currentIndex);
+			
+			if(is_target(current)){
+				return current.cost;
+			}
+			System.out.println("*********************************************");
+			//System.out.println(current.toString());
+			System.out.println(current.heuristic);
+			display(current.grid);
+			String gridShape = current.toString();
+			if (vis.contains(gridShape))
+				continue;
+			vis.add(gridShape);
+			ArrayList<state> new_states = move(current);
+			//System.out.println("new states " + new_states.size());
+			for (state s : new_states){
+				s.heuristic = heurstic1(s.grid);
+				priorityQueue.add(s);
+			}
+		}
+		
+		
+		return -1;
+	}
+	public static int aStar(state state){
+		
+		ArrayList<state> priorityQueue = new ArrayList<state>();
+		state.heuristic = heurstic1(state.grid);
+		//System.out.println("wth faksjd");
+		priorityQueue.add(state);
+		HashSet<String> vis = new HashSet<String>();
+		
+		while(!priorityQueue.isEmpty()){
+			int currentIndex = bestOptionAStar(priorityQueue);
+			//System.out.println(currentIndex);
+			state current = priorityQueue.get(currentIndex);
+			priorityQueue.remove(currentIndex);
+
+			if(is_target(current)){
+				return current.cost;
+			}
+			System.out.println("*********************************************");
+			//System.out.println(current.toString());
+			System.out.println(current.heuristic);
+			display(current.grid);
+			String gridShape = current.toString();
+			if (vis.contains(gridShape))
+				continue;
+			vis.add(gridShape);
+			ArrayList<state> new_states = move(current);
+			//System.out.println("new states " + new_states.size());
+			for (state s : new_states){
+				s.heuristic = heurstic1(s.grid);
+				priorityQueue.add(s);
+			}
+		}
+		
+		
+		return -1;
+	}
+	
+	public static int bestOptionGreedy(ArrayList<state> list){
+		int shortestHeuristic = list.get(0).heuristic;
+		int locationInList = 0;
+		for (int i = 0; i < list.size(); i++){
+			System.out.println("hello33  "+list.get(i).heuristic);
+			if (list.get(i).heuristic < shortestHeuristic){
+				shortestHeuristic = list.get(i).heuristic;
+				System.out.println("hello"+shortestHeuristic);
+				locationInList = i;
+			}
+		}
+		return locationInList;
+	}
+	public static int bestOptionAStar(ArrayList<state> list){
+		int shortestHeuristicPlusCost = list.get(0).heuristic + list.get(0).cost;
+		int locationInList = 0;
+		for (int i = 0; i < list.size(); i++){
+			if (list.get(i).heuristic < shortestHeuristicPlusCost){
+				shortestHeuristicPlusCost = list.get(i).heuristic + list.get(i).cost;
+				System.out.println("hello   " + shortestHeuristicPlusCost);
+				locationInList = i;
+			}
+		}
+		return locationInList;
+	}
+	
+	public static int heurstic1(char[][] grid){
+		
+		int retVal = 0, dx = 0, dy = 0;
+		loop:
+		for (int i = 0; i<grid.length; i++){
+			for (int j = 0; j<grid[0].length; j++){
+				if(grid[i][j] == 'r'){
+					dx = i;
+					dy = j;
+					break loop;
+					
+				}
+			}
+		}
+		for (int ii = 0; ii < grid.length; ii++){
+			for(int jj = 0; jj< grid[0].length; jj++){
+				if(grid[ii][jj] == 'r' && (dx != ii) && (dy != jj)){
+					retVal = ((Math.abs(dx - ii ) + Math.abs(dy -jj))-1) + retVal;
+					System.out.println(retVal+ "dx :" +dx + "dy :" + dy);
+					dx = ii;
+					dy = jj;
+						
+				}
+			}
+		}
+		//System.out.println(retVal);
+		return retVal;
+
+		}
+		
+
+	public static int heurstic2(){
+		return 0;
+		
+	}
 
 	// ..#.
 	// r..#
@@ -229,29 +367,29 @@ public class Main {
 	// .r#.
 	public static void main(String[] args) throws Exception {
 		char[][] test_board = new char[4][4];
-		test_board[0][0] = '.';
-		test_board[0][1] = '.';
-		test_board[0][2] = '#';
-		test_board[0][3] = '.';
-		test_board[1][0] = 'r';
-		test_board[1][1] = '.';
-		test_board[1][2] = '.';
-		test_board[1][3] = '#';
-		test_board[2][0] = '#';
-		test_board[2][1] = 'r';
-		test_board[2][2] = '.';
-		test_board[2][3] = '.';
-		test_board[3][0] = '.';
-		test_board[3][1] = '.';
-		test_board[3][2] = '#';
-		test_board[3][3] = '.';
-		display(test_board);
-//		Grid test = new Grid();
-//		test.display();
+//		test_board[0][0] = '.';
+//		test_board[0][1] = '#';
+//		test_board[0][2] = '#';
+//		test_board[0][3] = '.';
+//		test_board[1][0] = 'r';
+//		test_board[1][1] = '.';
+//		test_board[1][2] = '.';
+//		test_board[1][3] = '#';
+//		test_board[2][0] = '#';
+//		test_board[2][1] = '.';
+//		test_board[2][2] = '.';
+//		test_board[2][3] = '.';
+//		test_board[3][0] = '.';
+//		test_board[3][1] = 'r';
+//		test_board[3][2] = '#';
+//		test_board[3][3] = '.';
+//		display(test_board);
+		Grid test = new Grid();
+		test.display();
 		System.out.println();
 		System.out.println("=====================");
 		state start = new state(test_board, 0);
-		int ans = uniform(start);
+		int ans = greedy(start);
 		System.out.println("total cost = " + ans);
 	}
 }

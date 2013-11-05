@@ -2,6 +2,7 @@ class state {
 	char grid[][];
 	int cost;
 	int numberOfParts;
+	int heuristic;
 	public state(char[][] grid, int cost  ) {
 		this.grid = grid;
 		this.cost = cost;
