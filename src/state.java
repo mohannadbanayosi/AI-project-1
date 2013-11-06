@@ -3,6 +3,8 @@ class state {
 	int cost;
 	int lvl;
 	int numberOfParts;
+
+	int heuristic;
 	public state(char[][] grid, int cost, int lvl  ) {
 		this.grid = grid;
 		this.cost = cost;
