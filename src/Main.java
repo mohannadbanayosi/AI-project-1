@@ -80,22 +80,22 @@ public class Main {
 					System.out.println("in if");
 					ArrayList<Point> connected_parts = new ArrayList<Point>();
 					ArrayList<Point> connected_parts_old = new ArrayList<Point>();
-					for (int k = 0; k < 4; ++k) {// loop on direction
-						int curi = i, curj = j;
-						int cost = 0;
-						for (int l = 0; l < 4; ++l) {
+					
+					connected_parts.add(new Point(i, j));
+					for (int count = 0; count < connected_parts.size(); ++count) {
+						for (int k = 0; k < 4; ++k) {
 							try{
-								if(grid[curi + dx[k]][curj + dy[k]] == 'r') {
+								if(grid[connected_parts.get(count).x + dx[k]][connected_parts.get(count).y + dy[k]] == 'r') {
 									boolean found = false;
 									for (int p = 0; p < connected_parts.size(); ++p) {
-										if (connected_parts.get(p).x == curi + dx[k] && connected_parts.get(p).y == curj + dy[k]) {
+										if ((connected_parts.get(p).x == connected_parts.get(count).x + dx[k]) && (connected_parts.get(p).y == connected_parts.get(count).y + dy[k])) {
 											found = true;
 											break;
 										}
 									}
 									if(!found) {
-										connected_parts.add(new Point(curi + dx[k], curj + dy[k]));
-										connected_parts_old.add(new Point(curi + dx[k], curj + dy[k]));
+										connected_parts.add(new Point(connected_parts.get(count).x + dx[k], connected_parts.get(count).y + dy[k]));
+										connected_parts_old.add(new Point(connected_parts.get(count).x + dx[k], connected_parts.get(count).y + dy[k]));
 									}
 								}
 							}
@@ -103,7 +103,32 @@ public class Main {
 								
 							}
 						}
-						if (connected_parts.size() != 0) {
+					}
+					
+					for (int k = 0; k < 4; ++k) {// loop on direction
+						int curi = i, curj = j;
+						int cost = 0;
+//						for (int l = 0; l < 4; ++l) {
+//							try{
+//								if(grid[curi + dx[k]][curj + dy[k]] == 'r') {
+//									boolean found = false;
+//									for (int p = 0; p < connected_parts.size(); ++p) {
+//										if (connected_parts.get(p).x == curi + dx[k] && connected_parts.get(p).y == curj + dy[k]) {
+//											found = true;
+//											break;
+//										}
+//									}
+//									if(!found) {
+//										connected_parts.add(new Point(curi + dx[k], curj + dy[k]));
+//										connected_parts_old.add(new Point(curi + dx[k], curj + dy[k]));
+//									}
+//								}
+//							}
+//							catch (Exception e){
+//								
+//							}
+//						}
+						if (connected_parts.size() != 1) {
 							System.out.println("if");
 							boolean running = true;
 							while(running) {
@@ -125,6 +150,8 @@ public class Main {
 							}
 						}
 						else {
+							curi = connected_parts.get(0).x;
+							curj = connected_parts.get(0).y;
 							System.out.println("in else");
 							while (curi + dx[k] >= 0 && curi + dx[k] < grid.length && curj + dy[k] >= 0 && curj + dy[k] < grid[0].length 
 									&& grid[curi + dx[k]][curj + dy[k]] != '#' && grid[curi + dx[k]][curj + dy[k]] != 'r') {
@@ -144,7 +171,7 @@ public class Main {
 								for (int jj = 0; jj < grid[0].length; ++jj)
 									new_grid[ii][jj] = grid[ii][jj];
 							
-							if (connected_parts.size() != 0) {
+							if (connected_parts.size() != 1) {
 								for (int p = 0; p < connected_parts_old.size(); ++p) {
 									new_grid[connected_parts_old.get(p).x][connected_parts_old.get(p).y] = '.';
 								}
