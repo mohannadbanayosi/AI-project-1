@@ -423,7 +423,7 @@ public class Main {
 			for(int jj = 0; jj< grid[0].length; jj++){
 				if(grid[ii][jj] == 'r' && (dx != ii) && (dy != jj)){
 					retVal = ((Math.abs(dx - ii ) + Math.abs(dy -jj))-1) + retVal;
-					System.out.println(retVal+ "dx :" +dx + "dy :" + dy);
+					//System.out.println(retVal+ "dx :" +dx + "dy :" + dy);
 					dx = ii;
 					dy = jj;
 						
@@ -436,8 +436,31 @@ public class Main {
 		}
 		
 
-	public static int heurstic2(){
-		return 0;
+	public static int heurstic2(char [][] grid){
+		int retVal = 0, dx = 0, dy = 0;
+		loop:
+		for (int i = 0; i<grid.length; i++){
+			for (int j = 0; j<grid[0].length; j++){
+				if(grid[i][j] == 'r'){
+					dx = i;
+					dy = j;
+					break loop;
+					
+				}
+			}
+		}
+		for (int ii = 0; ii < grid.length; ii++){
+			for(int jj = 0; jj< grid[0].length; jj++){
+				if(grid[ii][jj] == 'r' && (dx != ii) && (dy != jj)){
+					retVal = Math.max( Math.abs(dx - ii ) , Math.abs(dy -jj)) + retVal;
+					//System.out.println(retVal+ "dx :" +dx + "dy :" + dy);
+
+						
+				}
+			}
+		}
+		//System.out.println(retVal);
+		return retVal;
 		
 	}
 
