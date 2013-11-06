@@ -53,7 +53,7 @@ public class Main {
 									new_grid[ii][jj] = grid[ii][jj];
 							new_grid[i][j] = '.';
 							new_grid[curi][curj] = 'r';
-							state x = new state(new_grid, cur_cost + cost);
+							state x = new state(new_grid, cur_cost + cost, current.lvl + 1);
 							x.partAttached();
 							new_states.add(x);
 							System.out.println();
@@ -69,7 +69,7 @@ public class Main {
 									new_grid[ii][jj] = grid[ii][jj];
 							new_grid[i][j] = '.';
 							new_grid[curi][curj] = 'r';
-							new_states.add(new state(new_grid, cur_cost + cost));
+							new_states.add(new state(new_grid, cur_cost + cost, current.lvl + 1));
 							System.out.println();
 							System.out.println("==============found #===============");
 							display(new_grid);
@@ -172,6 +172,57 @@ public class Main {
 		
 	}
 
+	public static int iterative(state start) {
+		int curMaxLvl = 0;
+		
+		Stack<state> dfs_stack = new Stack<state>();
+		dfs_stack.push(start);
+		HashSet<String> vis = new HashSet<String>();
+
+		ArrayList<state> new_states = new ArrayList<state>();
+		
+		boolean maxLvlReached = false;
+
+		while (true) {
+			state current = (state) dfs_stack.pop();
+			String grid_shape = current.toString();
+			System.out.println(grid_shape);
+			int current_cost = current.cost;
+			
+			boolean dontExpand = false;
+			
+			if(current.lvl == curMaxLvl){
+				dontExpand = true;
+				maxLvlReached = true;
+			}
+			
+			
+			if (is_target(current)) {
+				return current_cost;
+			}
+			
+			if (vis.contains(grid_shape))
+				dontExpand = true;
+			vis.add(grid_shape);
+			
+			if(!dontExpand){
+				new_states = move(current);
+				for (state s : new_states)
+					dfs_stack.push(s);
+			}
+			
+			if(dfs_stack.isEmpty()){
+				if(!maxLvlReached)
+					return -1;
+				maxLvlReached = false;
+				dfs_stack = new Stack<state>();
+				dfs_stack.push(start);
+				vis = new HashSet<String>();
+				curMaxLvl++;
+			}
+		}
+	}
+	
 	// ..#.
 	// r..#
 	// #...
@@ -199,8 +250,8 @@ public class Main {
 //		test.display();
 		System.out.println();
 		System.out.println("=====================");
-		state start = new state(test_board, 0);
-		int ans = uniform(start);
+		state start = new state(test_board, 0, 0);
+		int ans = iterative(start);
 		System.out.println("total cost = " + ans);
 	}
 }

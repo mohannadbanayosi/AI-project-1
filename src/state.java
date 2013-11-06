@@ -1,10 +1,12 @@
 class state {
 	char grid[][];
 	int cost;
+	int lvl;
 	int numberOfParts;
-	public state(char[][] grid, int cost  ) {
+	public state(char[][] grid, int cost, int lvl  ) {
 		this.grid = grid;
 		this.cost = cost;
+		this.lvl = lvl;
 		this.numberOfParts = this.setNumberOfParts();
 	}
 
