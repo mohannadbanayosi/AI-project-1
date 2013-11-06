@@ -11,37 +11,53 @@ public class Main {
 	static int dx[] = new int[] { 1, -1, 0, 0 };
 	static int dy[] = new int[] { 0, 0, 1, -1 };
 
-	public static boolean is_target(state x) {
-		int count = x.numberOfParts();
-		System.out.println("*********************************************");
-		System.out.println(count);
-		System.out.println("*********************************************");
-		return count == 1 ? true : false;
-	}
-	
 //	public static boolean is_target(state x) {
-////		char[][] grid = x.grid;
-////		for (int l = 0; l < 4; ++l) {
-////			try{
-////				if(grid[curi + dx[k]][curj + dy[k]] == 'r') {
-////					boolean found = false;
-////					for (int p = 0; p < connected_parts.size(); ++p) {
-////						if (connected_parts.get(p).x == curi + dx[k] && connected_parts.get(p).y == curj + dy[k]) {
-////							found = true;
-////							break;
-////						}
-////					}
-////					if(!found) {
-////						connected_parts.add(new Point(curi + dx[k], curj + dy[k]));
-////						connected_parts_old.add(new Point(curi + dx[k], curj + dy[k]));
-////					}
-////				}
-////			}
-////			catch (Exception e){
-////				
-////			}
-////		}
+//		int count = x.numberOfParts();
+//		System.out.println("*********************************************");
+//		System.out.println(count);
+//		System.out.println("*********************************************");
+//		return count == 1 ? true : false;
 //	}
+	
+	public static boolean is_target(state x) {
+		char[][] grid = x.grid;
+		ArrayList<Point> connected_parts = new ArrayList<Point>();
+		for (int i = 0; i < grid.length; ++i) {
+			for (int j = 0; j < grid[0].length; ++j) {
+				if (grid[i][j] == 'r') {
+					connected_parts.add(new Point(i, j));
+					for (int count = 0; count < connected_parts.size(); ++count) {
+						for (int k = 0; k < 4; ++k) {
+							try{
+								if(grid[connected_parts.get(count).x + dx[k]][connected_parts.get(count).y + dy[k]] == 'r') {
+									boolean found = false;
+									for (int p = 0; p < connected_parts.size(); ++p) {
+										if ((connected_parts.get(p).x == connected_parts.get(count).x + dx[k]) && (connected_parts.get(p).y == connected_parts.get(count).y + dy[k])) {
+											found = true;
+											break;
+										}
+									}
+									if(!found) {
+										connected_parts.add(new Point(connected_parts.get(count).x + dx[k], connected_parts.get(count).y + dy[k]));
+									}
+								}
+							}
+							catch (Exception e){
+								
+							}
+						}
+					}
+					if (connected_parts.size() == x.numberOfParts()) {
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
 	
 	public static void display(char [][] grid){
 		for (int i =0 ; i < grid.length; i++){
