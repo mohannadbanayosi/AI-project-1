@@ -19,6 +19,30 @@ public class Main {
 		return count == 1 ? true : false;
 	}
 	
+//	public static boolean is_target(state x) {
+////		char[][] grid = x.grid;
+////		for (int l = 0; l < 4; ++l) {
+////			try{
+////				if(grid[curi + dx[k]][curj + dy[k]] == 'r') {
+////					boolean found = false;
+////					for (int p = 0; p < connected_parts.size(); ++p) {
+////						if (connected_parts.get(p).x == curi + dx[k] && connected_parts.get(p).y == curj + dy[k]) {
+////							found = true;
+////							break;
+////						}
+////					}
+////					if(!found) {
+////						connected_parts.add(new Point(curi + dx[k], curj + dy[k]));
+////						connected_parts_old.add(new Point(curi + dx[k], curj + dy[k]));
+////					}
+////				}
+////			}
+////			catch (Exception e){
+////				
+////			}
+////		}
+//	}
+	
 	public static void display(char [][] grid){
 		for (int i =0 ; i < grid.length; i++){
 			System.out.println();
@@ -35,28 +59,36 @@ public class Main {
 		int cur_cost = current.cost;
 		for (int i = 0; i < grid.length; ++i) {
 			for (int j = 0; j < grid[0].length; ++j) {
+				display(grid);
 				if (grid[i][j] == 'r') {// found robot part
+					System.out.println("in if");
 					ArrayList<Point> connected_parts = new ArrayList<Point>();
 					ArrayList<Point> connected_parts_old = new ArrayList<Point>();
 					for (int k = 0; k < 4; ++k) {// loop on direction
 						int curi = i, curj = j;
 						int cost = 0;
 						for (int l = 0; l < 4; ++l) {
-							if(grid[curi + dx[k]][curj + dy[k]] == 'r') {
-								boolean found = false;
-								for (int p = 0; p < connected_parts.size(); ++p) {
-									if (connected_parts.get(p).x == curi + dx[k] && connected_parts.get(p).y == curj + dy[k]) {
-										found = true;
-										break;
+							try{
+								if(grid[curi + dx[k]][curj + dy[k]] == 'r') {
+									boolean found = false;
+									for (int p = 0; p < connected_parts.size(); ++p) {
+										if (connected_parts.get(p).x == curi + dx[k] && connected_parts.get(p).y == curj + dy[k]) {
+											found = true;
+											break;
+										}
+									}
+									if(!found) {
+										connected_parts.add(new Point(curi + dx[k], curj + dy[k]));
+										connected_parts_old.add(new Point(curi + dx[k], curj + dy[k]));
 									}
 								}
-								if(!found) {
-									connected_parts.add(new Point(curi + dx[k], curj + dy[k]));
-									connected_parts_old.add(new Point(curi + dx[k], curj + dy[k]));
-								}
+							}
+							catch (Exception e){
+								
 							}
 						}
 						if (connected_parts.size() != 0) {
+							System.out.println("if");
 							boolean running = true;
 							while(running) {
 								for (int p = 0; p < connected_parts.size(); ++p) {
@@ -77,6 +109,7 @@ public class Main {
 							}
 						}
 						else {
+							System.out.println("in else");
 							while (curi + dx[k] >= 0 && curi + dx[k] < grid.length && curj + dy[k] >= 0 && curj + dy[k] < grid[0].length 
 									&& grid[curi + dx[k]][curj + dy[k]] != '#' && grid[curi + dx[k]][curj + dy[k]] != 'r') {
 								curi = curi + dx[k];
@@ -142,19 +175,23 @@ public class Main {
 		bfs_queue.offer(start);
 		HashSet<String> vis = new HashSet<String>();
 		while (!bfs_queue.isEmpty()) {
+			System.out.println("in bfs");
 			state current = bfs_queue.poll();
 			char[][] grid = current.grid;
 			String grid_shape = current.toString();
 			System.out.println(grid_shape);
 			int current_cost = current.cost;
 			if (is_target(current)) {
+				System.out.println("istarget");
 				return current_cost;
 			}
 			if (vis.contains(grid_shape))
 				continue;
 			vis.add(grid_shape);
 			// moves
+			System.out.println("lol");
 			ArrayList<state> new_states = move(current);
+			System.out.println(new_states.size());
 			//System.out.println("new states " + new_states.size());
 			for (state s : new_states)
 				bfs_queue.offer(s);
@@ -367,29 +404,31 @@ public class Main {
 	// .r#.
 	public static void main(String[] args) throws Exception {
 		char[][] test_board = new char[4][4];
-//		test_board[0][0] = '.';
-//		test_board[0][1] = '#';
-//		test_board[0][2] = '#';
-//		test_board[0][3] = '.';
-//		test_board[1][0] = 'r';
-//		test_board[1][1] = '.';
-//		test_board[1][2] = '.';
-//		test_board[1][3] = '#';
-//		test_board[2][0] = '#';
-//		test_board[2][1] = '.';
-//		test_board[2][2] = '.';
-//		test_board[2][3] = '.';
-//		test_board[3][0] = '.';
-//		test_board[3][1] = 'r';
-//		test_board[3][2] = '#';
-//		test_board[3][3] = '.';
-//		display(test_board);
+		test_board[0][0] = '.';
+		test_board[0][1] = '.';
+		test_board[0][2] = '.';
+		test_board[0][3] = '.';
+		test_board[1][0] = 'r';
+		test_board[1][1] = '.';
+		test_board[1][2] = 'r';
+		test_board[1][3] = '.';
+		test_board[2][0] = '.';
+		test_board[2][1] = '.';
+		test_board[2][2] = '.';
+		test_board[2][3] = '.';
+		test_board[3][0] = 'r';
+		test_board[3][1] = '.';
+		test_board[3][2] = '.';
+		test_board[3][3] = '.';
+		display(test_board);
 		Grid test = new Grid();
 		test.display();
 		System.out.println();
 		System.out.println("=====================");
 		state start = new state(test_board, 0);
-		int ans = greedy(start);
+		System.out.println("lama nshuf");
+		System.out.println(test.grid[0][0]);
+		int ans = bfs(start);
 		System.out.println("total cost = " + ans);
 	}
 }
