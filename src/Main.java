@@ -178,6 +178,7 @@ public class Main {
 							for (int ii = 0; ii < grid.length; ++ii)
 								for (int jj = 0; jj < grid[0].length; ++jj)
 									new_grid[ii][jj] = grid[ii][jj];
+
 							
 							if (connected_parts.size() != 1) {
 								System.out.println(connected_parts.size());
@@ -214,7 +215,8 @@ public class Main {
 								System.out.println("Shape of grid after moving2:");
 								display(new_grid);
 							}
-							state x = new state(new_grid, cur_cost + cost);
+							state x = new state(new_grid, cur_cost + cost, current.lvl + 1);
+
 							x.partAttached();
 							new_states.add(x);
 							//System.out.println();
@@ -230,11 +232,13 @@ public class Main {
 									new_grid[ii][jj] = grid[ii][jj];
 							new_grid[i][j] = '.';
 							new_grid[curi][curj] = 'r';
-							new_states.add(new state(new_grid, cur_cost + cost));
+
+							new_states.add(new state(new_grid, cur_cost + cost, current.lvl + 1));
 							//System.out.println();
 							//System.out.println("==============found #===============");
 							//display(new_grid);
 							//System.out.println("*********************************************");
+
 						}
 					}
 				}
@@ -251,7 +255,6 @@ public class Main {
 		while (!bfs_queue.isEmpty()) {
 			System.out.println("in bfs");
 			state current = bfs_queue.poll();
-			char[][] grid = current.grid;
 			String grid_shape = current.toString();
 			int current_cost = current.cost;
 			if (is_target(current)) {
@@ -276,7 +279,6 @@ public class Main {
 		HashSet<String> vis = new HashSet<String>();
 		while (!dfs_stack.isEmpty()) {
 			state current = (state) dfs_stack.pop();
-			char[][] grid = current.grid;
 			String grid_shape = current.toString();
 			System.out.println(grid_shape);
 			int current_cost = current.cost;
@@ -312,8 +314,7 @@ public class Main {
 				
 			state current = (state) uniformQ.get(minCost);
 			uniformQ.remove(minCost);
-			
-			char[][] grid = current.grid;
+	
 			String grid_shape = current.toString();
 			//System.out.println(grid_shape);
 			int current_cost = current.cost;
@@ -450,7 +451,7 @@ public class Main {
 			for(int jj = 0; jj< grid[0].length; jj++){
 				if(grid[ii][jj] == 'r' && (dx != ii) && (dy != jj)){
 					retVal = ((Math.abs(dx - ii ) + Math.abs(dy -jj))-1) + retVal;
-					System.out.println(retVal+ "dx :" +dx + "dy :" + dy);
+					//System.out.println(retVal+ "dx :" +dx + "dy :" + dy);
 					dx = ii;
 					dy = jj;
 						
@@ -463,11 +464,84 @@ public class Main {
 		}
 		
 
-	public static int heurstic2(){
-		return 0;
+	public static int heurstic2(char [][] grid){
+		int retVal = 0, dx = 0, dy = 0;
+		loop:
+		for (int i = 0; i<grid.length; i++){
+			for (int j = 0; j<grid[0].length; j++){
+				if(grid[i][j] == 'r'){
+					dx = i;
+					dy = j;
+					break loop;
+					
+				}
+			}
+		}
+		for (int ii = 0; ii < grid.length; ii++){
+			for(int jj = 0; jj< grid[0].length; jj++){
+				if(grid[ii][jj] == 'r' && (dx != ii) && (dy != jj)){
+					retVal = Math.max( Math.abs(dx - ii ) , Math.abs(dy -jj)) + retVal;
+					//System.out.println(retVal+ "dx :" +dx + "dy :" + dy);
+
+						
+				}
+			}
+		}
+		//System.out.println(retVal);
+		return retVal;
 		
 	}
 
+	public static int iterative(state start) {
+		int curMaxLvl = 0;
+		
+		Stack<state> dfs_stack = new Stack<state>();
+		dfs_stack.push(start);
+		HashSet<String> vis = new HashSet<String>();
+
+		ArrayList<state> new_states = new ArrayList<state>();
+		
+		boolean maxLvlReached = false;
+
+		while (true) {
+			state current = (state) dfs_stack.pop();
+			String grid_shape = current.toString();
+			System.out.println(grid_shape);
+			int current_cost = current.cost;
+			
+			boolean dontExpand = false;
+			
+			if(current.lvl == curMaxLvl){
+				dontExpand = true;
+				maxLvlReached = true;
+			}
+			
+			if (is_target(current)) {
+				return current_cost;
+			}
+			
+			if (vis.contains(grid_shape))
+				dontExpand = true;
+			vis.add(grid_shape);
+			
+			if(!dontExpand){
+				new_states = move(current);
+				for (state s : new_states)
+					dfs_stack.push(s);
+			}
+			
+			if(dfs_stack.isEmpty()){
+				if(!maxLvlReached)
+					return -1;
+				maxLvlReached = false;
+				dfs_stack = new Stack<state>();
+				dfs_stack.push(start);
+				vis = new HashSet<String>();
+				curMaxLvl++;
+			}
+		}
+	}
+	
 	// ..#.
 	// r..#
 	// #...
@@ -495,9 +569,10 @@ public class Main {
 		test.display();
 		System.out.println();
 		System.out.println("=====================");
-		state start = new state(test_board, 0);
+		state start = new state(test_board, 0, 0);
 		System.out.println(test.grid[0][0]);
 		int ans = bfs(start);
+
 		System.out.println("total cost = " + ans);
 	}
 }
