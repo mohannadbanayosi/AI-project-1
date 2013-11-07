@@ -15,13 +15,11 @@ public class Grid {
 	
 	public Grid(){
 		length = (int)((Math.random() * 6)+3) ;
-		width = (int)((Math.random() * 6)+3) ;
-		System.out.println("n" + length+", " +"p"+ width);
+		width = (int)((Math.random() * 6)+3) ;	
 		numberOfObstacles = ((int) (Math.random() * 5)) +1;
 		obstaclesLocations = new ArrayList<String>();
 		numberOfParts = ((int) (Math.random() * 5))+1;
 		partsLocations = new ArrayList<String>();
-		//System.out.println("n" + numberOfObstacles+", " +"p"+ numberOfParts);
 		generateParts();
 		generateObstacles();
 		generateGridSize();
@@ -33,7 +31,6 @@ public class Grid {
 	
 	public void generateGridSize(){
 		
-		//System.out.println("lne"+length+"dasdasd  " +width);
 		grid = new char [length][width];
 		for (int i=0;i < length;i++){
 			for (int j =0; j < width ; j++){
@@ -58,7 +55,6 @@ public class Grid {
 			dy = (int) ((Math.random() * width-1)+1) ;
 			
 			position = dx + "," + dy;
-			//System.out.println(position);
 			if (checkIsLocationEmpty(position) == 0){
 				partsLocations.add(position);
 				i++;

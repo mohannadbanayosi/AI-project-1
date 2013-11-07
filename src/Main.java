@@ -11,6 +11,12 @@ public class Main {
 	static int dx[] = new int[] { 1, -1, 0, 0 };
 	static int dy[] = new int[] { 0, 0, 1, -1 };
 	
+	
+	/*=========================================
+	 				is_target(state)
+	 Method used to check whether the state is 
+	 a goal state.
+	 ===========================================*/
 	public static boolean is_target(state x) {
 		char[][] grid = x.grid;
 		ArrayList<Point> connected_parts = new ArrayList<Point>();
@@ -44,11 +50,9 @@ public class Main {
 						for(int s = 0 ; s < x.grid[0].length ; ++s)
 							if(x.grid[a][s] == 'r')
 								count++;
-					System.out.println("Number of parts");
-					System.out.println(count);
+					
 					if (connected_parts.size() == count) {
-						System.out.println("Done :");
-						display(x.grid);
+						
 						return true;
 					}
 					else {
@@ -60,15 +64,11 @@ public class Main {
 		return true;
 	}
 	
-	public static void display(char [][] grid){// displays the grid
-		for (int i =0 ; i < grid.length; i++){
-			System.out.println();
-			for (int j = 0; j < grid[i].length; j++){
-				System.out.print(grid[i][j]);
-			}
-		}
-		System.out.println();
-	}
+	/*=========================================
+						move(state)
+	discovers the current state and returns an array
+	list of states. 
+	===========================================*/
 
 	public static ArrayList<state> move(state current) {
 		ArrayList<state> new_states = new ArrayList<state>();
@@ -76,7 +76,7 @@ public class Main {
 		int cur_cost = current.cost;
 		for (int i = 0; i < grid.length; ++i) {
 			for (int j = 0; j < grid[0].length; ++j) {
-				display(grid);
+				//display(grid);
 				if (grid[i][j] == 'r') {// found robot part
 					ArrayList<Point> connected_parts = new ArrayList<Point>();
 					ArrayList<Point> connected_parts_old = new ArrayList<Point>();
@@ -151,48 +151,31 @@ public class Main {
 
 							
 							if (connected_parts.size() != 1) {
-								System.out.println(connected_parts.size());
-								System.out.println("old positions :");
-								for (int p = 0; p < connected_parts_old.size(); ++p) {
-									System.out.println(connected_parts_old.get(p).x + "," + connected_parts_old.get(p).y);
-								}
-								System.out.println("");
-								System.out.println("new positions :");
-								for (int p = 0; p < connected_parts.size(); ++p) {
-									System.out.println(connected_parts.get(p).x + "," + connected_parts.get(p).y);
-								}
-								System.out.println("");
-								System.out.println("Shape of grid before moving1:");
-								display(new_grid);
+								
+								
+								
 								for (int p = 0; p < connected_parts_old.size(); ++p) {
 									new_grid[connected_parts_old.get(p).x][connected_parts_old.get(p).y] = '.';
 								}
 								
-								System.out.println("Shape of grid middle1:");
-								display(new_grid);
+								
 								
 								for (int p = 0; p < connected_parts.size(); ++p) {
 									new_grid[connected_parts.get(p).x][connected_parts.get(p).y] = 'r';
 								}
-								System.out.println("Shape of grid after moving1:");
-								display(new_grid);
+								
 							}
 							else {
-								System.out.println("Shape of grid before moving2:");
-								display(new_grid);
+								
 								new_grid[i][j] = '.';
 								new_grid[curi][curj] = 'r';
-								System.out.println("Shape of grid after moving2:");
-								display(new_grid);
+								
 							}
 							state x = new state(new_grid, cur_cost + cost, current.lvl + 1);
 
 							x.partAttached();
 							new_states.add(x);
-							//System.out.println();
-							System.out.println("==============found r===============");
-							//display(new_grid);
-							//System.out.println("*********************************************");
+							
 						}
 						if (nxt == '#') {
 							// new move collided with obstacle
@@ -204,10 +187,7 @@ public class Main {
 							new_grid[curi][curj] = 'r';
 
 							new_states.add(new state(new_grid, cur_cost + cost, current.lvl + 1));
-							//System.out.println();
-							//System.out.println("==============found #===============");
-							//display(new_grid);
-							//System.out.println("*********************************************");
+							
 
 						}
 					}
@@ -217,22 +197,76 @@ public class Main {
 		return new_states;
 	}
 	
+	
+	/*=================================================
+	 				 Printing methods
+	  display(grid):
+	  prints the grid in the console
+	  displayNodes(Arraylist):
+	  prints the nodes path of the search algorithm
+	  
+	 ===================================================*/
+	
+	public static void display(char [][] grid){// displays the grid
+		for (int i =0 ; i < grid.length; i++){
+			System.out.println();
+			for (int j = 0; j < grid[i].length; j++){
+				System.out.print(grid[i][j]);
+			}
+		}
+		System.out.println();
+	}
+	
+	public static void displayNodes(ArrayList<String> x){// displays the Nodes discovered
+		System.out.println("*********Nodes Discovered By Order************");
+		for (int i = 0 ; i < x.size()-1; i++){
+			System.out.print(x.get(i) +" ==> ");
+		}
+		System.out.print(x.get(x.size()-1) + " is The Goal");
+		System.out.println();
+		System.out.println("*********End Of Nodes Discovered By Order************");
+	}
 
-	public static int bfs(state start) {
+	/*=================================================
+	 				Search methods
+	Search method helpers for the method Search()
+
+
+	===================================================*/
+	public static int bfs(state start, char visualize) {
 		Queue<state> bfs_queue = new LinkedList<state>();
 		bfs_queue.offer(start);
 		HashSet<String> vis = new HashSet<String>();
+		ArrayList<String> nodes = new ArrayList<String>();
+		int cost = 0;
 		while (!bfs_queue.isEmpty()) {
-			System.out.println("in bfs");
 			state current = bfs_queue.poll();
 			String grid_shape = current.toString();
-			int current_cost = current.cost;
 			if (is_target(current)) {
-				return current_cost;
+				int current_cost = current.cost;
+				cost += current_cost;
+				System.out.println("*****************GOAL****************");
+				System.out.println(current.nodeNumber);
+				display(current.grid);
+				nodes.add(current.nodeNumber+"");
+				displayNodes(nodes);
+				System.out.println("*****************GOAL****************");
+				System.out.println("*****************Cost****************");
+				System.out.println("Total Cost: " + cost);
+				System.out.println("*************************************");
+				return cost;
 			}
 			if (vis.contains(grid_shape))
 				continue;
+			int current_cost = current.cost;
+			cost += current_cost;
 			vis.add(grid_shape);
+			nodes.add(current.nodeNumber + "");
+			if (visualize == 't') {
+				System.out.println("*********************************************");
+				System.out.println(current.nodeNumber);
+				display(current.grid);
+			}
 			// moves
 			ArrayList<state> new_states = move(current);
 			//System.out.println("new states " + new_states.size());
@@ -242,25 +276,44 @@ public class Main {
 		return -1;
 	}
 	
-	public static int dfs(state start) {
+	public static int dfs(state start, char visualize) {
 		
 		Stack<state> dfs_stack = new Stack<state>();
 		dfs_stack.push(start);
 		HashSet<String> vis = new HashSet<String>();
+		ArrayList<String> nodes = new ArrayList<String>();
+		int cost = 0;
 		while (!dfs_stack.isEmpty()) {
 			state current = (state) dfs_stack.pop();
-			String grid_shape = current.toString();
-			System.out.println(grid_shape);
-			int current_cost = current.cost;
+			String grid_shape = current.toString();	
+			
 			if (is_target(current)) {
-				return current_cost;
+				int current_cost = current.cost;
+				cost += current_cost;
+				System.out.println("*****************GOAL****************");
+				System.out.println(current.nodeNumber);
+				display(current.grid);
+				nodes.add(current.nodeNumber+"");
+				displayNodes(nodes);
+				System.out.println("*****************GOAL****************");
+				System.out.println("*****************Cost****************");
+				System.out.println("Total Cost: " + cost);
+				System.out.println("*************************************");
+				return cost;
 			}
 			if (vis.contains(grid_shape))
 				continue;
+			int current_cost = current.cost;
+			cost += current_cost;
+			nodes.add(current.nodeNumber + "");
+			if (visualize == 't') {
+				System.out.println("*********************************************");
+				System.out.println(current.nodeNumber);
+				display(current.grid);
+			}
 			vis.add(grid_shape);
-			// moves
 			ArrayList<state> new_states = move(current);
-			System.out.println("new states " + new_states.size());
+			//System.out.println("new states " + new_states.size());
 			for (int i = new_states.size()-1; i >= 0; i--)
 				dfs_stack.push(new_states.get(i));
 		}
@@ -269,11 +322,13 @@ public class Main {
 		
 	}
 	
-	public static int uniform(state start) {
+	public static int uniform(state start , char visualize) {
 		
 		ArrayList<state> uniformQ = new ArrayList<state>();
 		uniformQ.add(start);
 		HashSet<String> vis = new HashSet<String>();
+		ArrayList<String> nodes = new ArrayList<String>();
+		int cost = 0;
 		while (!uniformQ.isEmpty()) {
 			//get the index of the state with minimum cost
 			int minCost = 0;
@@ -284,15 +339,34 @@ public class Main {
 				
 			state current = (state) uniformQ.get(minCost);
 			uniformQ.remove(minCost);
-	
+			
 			String grid_shape = current.toString();
 			//System.out.println(grid_shape);
-			int current_cost = current.cost;
+			
 			if (is_target(current)) {
-				return current_cost;
+				int current_cost = current.cost;
+				cost += current_cost;
+				System.out.println("*****************GOAL****************");
+				System.out.println(current.nodeNumber);
+				display(current.grid);
+				nodes.add(current.nodeNumber+"");
+				displayNodes(nodes);
+				System.out.println("*****************GOAL****************");
+				System.out.println("*****************Cost****************");
+				System.out.println("Total Cost: " + cost);
+				System.out.println("*************************************");
+				return cost;
 			}
 			if (vis.contains(grid_shape))
 				continue;
+			int current_cost = current.cost;
+			cost += current_cost;
+			nodes.add(current.nodeNumber + "");
+			if (visualize == 't') {
+				System.out.println("*********************************************");
+				System.out.println(current.nodeNumber);
+				display(current.grid);
+			}
 			vis.add(grid_shape);
 			// moves
 			ArrayList<state> new_states = move(current);
@@ -304,71 +378,129 @@ public class Main {
 		return -1;
 		
 	}
-	public static int greedy(state state){
+	
+	
+	public static int iterative(state start , char visualize) {
+		int curMaxLvl = 0;
+		
+		Stack<state> dfs_stack = new Stack<state>();
+		dfs_stack.push(start);
+		HashSet<String> vis = new HashSet<String>();
+		ArrayList<String> nodes = new ArrayList<String>();
+		int cost = 0;
+		ArrayList<state> new_states = new ArrayList<state>();
+		
+		boolean maxLvlReached = false;
+
+		while (true) {
+			state current = (state) dfs_stack.pop();
+			String grid_shape = current.toString();
+			
+			boolean dontExpand = false;
+			
+			if(current.lvl == curMaxLvl){
+				dontExpand = true;
+				maxLvlReached = true;
+			}
+			
+			if (is_target(current)) {
+				int current_cost = current.cost;
+				cost += current_cost;
+				System.out.println("*****************GOAL****************");
+				System.out.println(current.nodeNumber);
+				display(current.grid);
+				nodes.add(current.nodeNumber+"");
+				displayNodes(nodes);
+				System.out.println("*****************GOAL****************");
+				System.out.println("*****************Cost****************");
+				System.out.println("Total Cost: " + cost);
+				System.out.println("*************************************");
+				return cost;
+			}
+			
+			if (vis.contains(grid_shape))
+				dontExpand = true;
+			vis.add(grid_shape);
+			int current_cost = current.cost;
+			cost += current_cost;
+			nodes.add(current.nodeNumber + "");
+			if (visualize == 't') {
+				System.out.println("*********************************************");
+				System.out.println(current.nodeNumber);
+				display(current.grid);
+			}
+			
+			if(!dontExpand){
+				new_states = move(current);
+				for (state s : new_states)
+					dfs_stack.push(s);
+			}
+			
+			if(dfs_stack.isEmpty()){
+				if(!maxLvlReached)
+					return -1;
+				maxLvlReached = false;
+				dfs_stack = new Stack<state>();
+				dfs_stack.push(start);
+				vis = new HashSet<String>();
+				curMaxLvl++;
+			}
+		}
+	}
+	
+	public static int greedy(state state, String heuristic, char visualize){
 		
 		ArrayList<state> priorityQueue = new ArrayList<state>();
+		if (heuristic.equals("GR1")) {
 		state.heuristic = heurstic1(state.grid);
-		//System.out.println("wth faksjd");
+		}
+		if (heuristic.equals("GR2")) {
+			state.heuristic = heurstic2(state.grid);
+			}
 		priorityQueue.add(state);
 		HashSet<String> vis = new HashSet<String>();
-		
+		ArrayList<String> nodes = new ArrayList<String>();
+		int cost = 0;
 		while(!priorityQueue.isEmpty()){
 			int currentIndex = bestOptionGreedy(priorityQueue);
-			//System.out.println(currentIndex);
 			state current = priorityQueue.get(currentIndex);
 			priorityQueue.remove(currentIndex);
 			
 			if(is_target(current)){
-				return current.cost;
+				int current_cost = current.cost;
+				cost += current_cost;
+				System.out.println("*****************GOAL****************");
+				System.out.println(current.nodeNumber);
+				display(current.grid);
+				nodes.add(current.nodeNumber+"");
+				displayNodes(nodes);
+				System.out.println("*****************GOAL****************");
+				System.out.println("*****************Cost****************");
+				System.out.println("Total Cost: " + cost);
+				System.out.println("*************************************");
+				return cost;
 			}
-			System.out.println("*********************************************");
-			//System.out.println(current.toString());
-			System.out.println(current.heuristic);
-			display(current.grid);
 			String gridShape = current.toString();
 			if (vis.contains(gridShape))
 				continue;
+			int current_cost = current.cost;
+			cost += current_cost;
+			nodes.add(current.nodeNumber + "");
+			if (visualize == 't') {
+				System.out.println("*********************************************");
+				System.out.println(current.nodeNumber);
+				System.out.println("Heuristic:  "  + current.heuristic);
+				display(current.grid);
+			}
 			vis.add(gridShape);
 			ArrayList<state> new_states = move(current);
-			//System.out.println("new states " + new_states.size());
 			for (state s : new_states){
-				s.heuristic = heurstic1(s.grid);
-				priorityQueue.add(s);
-			}
-		}
-		
-		
-		return -1;
-	}
-	public static int aStar(state state){
-		
-		ArrayList<state> priorityQueue = new ArrayList<state>();
-		state.heuristic = heurstic1(state.grid);
-		//System.out.println("wth faksjd");
-		priorityQueue.add(state);
-		HashSet<String> vis = new HashSet<String>();
-		
-		while(!priorityQueue.isEmpty()){
-			int currentIndex = bestOptionAStar(priorityQueue);
-			//System.out.println(currentIndex);
-			state current = priorityQueue.get(currentIndex);
-			priorityQueue.remove(currentIndex);
-
-			if(is_target(current)){
-				return current.cost;
-			}
-			System.out.println("*********************************************");
-			//System.out.println(current.toString());
-			System.out.println(current.heuristic);
-			display(current.grid);
-			String gridShape = current.toString();
-			if (vis.contains(gridShape))
-				continue;
-			vis.add(gridShape);
-			ArrayList<state> new_states = move(current);
-			//System.out.println("new states " + new_states.size());
-			for (state s : new_states){
-				s.heuristic = heurstic1(s.grid);
+				if (heuristic.equals("GR1")) {
+					s.heuristic = heurstic1(s.grid);
+					}
+				if (heuristic.equals("GR2")) {
+					s.heuristic = heurstic2(s.grid);
+					}
 				priorityQueue.add(s);
 			}
 		}
@@ -377,14 +509,84 @@ public class Main {
 		return -1;
 	}
 	
+	
+	
+	public static int aStar(state state, String heuristic, char visualize){
+		
+		ArrayList<state> priorityQueue = new ArrayList<state>();
+		if (heuristic.equals("AS1")) {
+		state.heuristic = heurstic1(state.grid);
+		}
+		if (heuristic.equals("AS2")) {
+			state.heuristic = heurstic2(state.grid);
+		}
+		priorityQueue.add(state);
+		HashSet<String> vis = new HashSet<String>();
+		ArrayList<String> nodes = new ArrayList<String>();
+		int cost = 0;
+		while(!priorityQueue.isEmpty()){
+			int currentIndex = bestOptionAStar(priorityQueue);
+			state current = priorityQueue.get(currentIndex);
+			priorityQueue.remove(currentIndex);
+			;
+			if(is_target(current)){
+				int current_cost = current.cost;
+				cost += current_cost;
+				System.out.println("*****************GOAL****************");
+				System.out.println(current.nodeNumber);
+				display(current.grid);
+				nodes.add(current.nodeNumber+"");
+				displayNodes(nodes);
+				System.out.println("*****************GOAL****************");
+				System.out.println("*****************Cost****************");
+				System.out.println("Total Cost: " + cost);
+				System.out.println("*************************************");
+				return cost;
+			}
+
+			String gridShape = current.toString();
+			if (vis.contains(gridShape))
+				continue;
+			int current_cost = current.cost;
+			cost += current_cost;
+			nodes.add(current.nodeNumber + "");
+			if (visualize == 't') {
+				System.out.println("*********************************************");
+				System.out.println(current.nodeNumber);
+				System.out.println("Heuristic:  "  + current.heuristic);
+				display(current.grid);
+			}
+			vis.add(gridShape);
+			ArrayList<state> new_states = move(current);
+			for (state s : new_states){
+				if (heuristic.equals("AS1")) {
+					s.heuristic = heurstic1(s.grid);
+					}
+				if (heuristic.equals("AS2")) {
+					s.heuristic = heurstic2(s.grid);
+					}
+				priorityQueue.add(s);
+			}
+		}
+		
+		
+		return -1;
+	}
+	/*====================================================
+	 		Arraylist get methods for greedy and Astar
+	 bestOptionGreedy(list of states):
+	 Takes a list of states and returns the index of the
+	 state with the least heuristic value.
+	 bestOptionAstar(list of states):
+	 Takes a list of states and returns the index of the
+	 state with the least heuristic value + Cost value.
+	 =====================================================*/
 	public static int bestOptionGreedy(ArrayList<state> list){
 		int shortestHeuristic = list.get(0).heuristic;
 		int locationInList = 0;
 		for (int i = 0; i < list.size(); i++){
-			System.out.println("hello33  "+list.get(i).heuristic);
 			if (list.get(i).heuristic < shortestHeuristic){
 				shortestHeuristic = list.get(i).heuristic;
-				System.out.println("hello"+shortestHeuristic);
 				locationInList = i;
 			}
 		}
@@ -396,12 +598,29 @@ public class Main {
 		for (int i = 0; i < list.size(); i++){
 			if (list.get(i).heuristic < shortestHeuristicPlusCost){
 				shortestHeuristicPlusCost = list.get(i).heuristic + list.get(i).cost;
-				System.out.println("hello   " + shortestHeuristicPlusCost);
 				locationInList = i;
 			}
 		}
 		return locationInList;
 	}
+	
+	
+	/*========================================
+					Heuristics
+	heurstic1(grid):
+	passes through the grid, captures one robot
+	part and makes all the others move towards 
+	it while keeping count of the difference 
+	between the (x,y).
+	heuristic2(grid):
+	passes through the grid, captures one robot
+	part and makes all the others move towards 
+	it, however here it tries to get the 
+	distance between the robot parts using the 
+	virtual straight path.
+
+	===========================================*/
+	
 	
 	public static int heurstic1(char[][] grid){
 		
@@ -421,14 +640,12 @@ public class Main {
 			for(int jj = 0; jj< grid[0].length; jj++){
 				if(grid[ii][jj] == 'r' && (dx != ii) && (dy != jj)){
 					retVal = ((Math.abs(dx - ii ) + Math.abs(dy -jj))-1) + retVal;
-					//System.out.println(retVal+ "dx :" +dx + "dy :" + dy);
 					dx = ii;
 					dy = jj;
 						
 				}
 			}
 		}
-		//System.out.println(retVal);
 		return retVal;
 
 		}
@@ -451,99 +668,139 @@ public class Main {
 			for(int jj = 0; jj< grid[0].length; jj++){
 				if(grid[ii][jj] == 'r' && (dx != ii) && (dy != jj)){
 					retVal = Math.max( Math.abs(dx - ii ) , Math.abs(dy -jj)) + retVal;
-					//System.out.println(retVal+ "dx :" +dx + "dy :" + dy);
 
 						
 				}
 			}
 		}
-		//System.out.println(retVal);
 		return retVal;
 		
 	}
 
-	public static int iterative(state start) {
-		int curMaxLvl = 0;
+	
+	
+	
+	
+	
+	
+	
+	/*================================================
+						GenGrid()
+	Purpose: generates a random grid, places random
+	number of robot parts and random number of 
+	obstacles in random locations.
+	Usage:
+	    Grid x = GenGrid();
+		Grid y = GenGrid("-v");
+		Grid z = GenGrid("-vv");
+    passing no variables will not show any info about
+    the grid in the console.
+    -v option verbose prints the grid 
+    -vv veryverbose option prints the grid and all 
+        accomapnied information 
+	
+	================================================*/
+	public static Grid GenGrid(){
+		Grid randomGrid = new Grid();
+		return randomGrid;
+	}
+	public static Grid GenGrid(String verbose){
+		Grid randomGrid = new Grid();
+		if (verbose.equals("-v")){
+			System.out.println();
+			System.out.println("*******Random Grid*******");
+			display(randomGrid.grid);
+			System.out.println("*******End Random Grid*******");
+		}
+		else{
+			if (verbose.equals("-vv")){
+				System.out.println();
+				System.out.println("*******Random Grid*******");
+				display(randomGrid.grid);
+				System.out.println("*******Number of Parts*******");
+				System.out.println(randomGrid.numberOfParts);
+				System.out.println("*******Number of Obstacles*******");
+				System.out.println(randomGrid.numberOfObstacles);
+				System.out.println("*******Grid Size*******");
+				System.out.println(randomGrid.length + " x " + randomGrid.width);
+				System.out.println("*******End Random Grid*******");
+				
+			}
+			else{
+				System.out.println("Invalid option for GenGrid()");
+			}
+		}
 		
-		Stack<state> dfs_stack = new Stack<state>();
-		dfs_stack.push(start);
-		HashSet<String> vis = new HashSet<String>();
-
-		ArrayList<state> new_states = new ArrayList<state>();
 		
-		boolean maxLvlReached = false;
-
-		while (true) {
-			state current = (state) dfs_stack.pop();
-			String grid_shape = current.toString();
-			System.out.println(grid_shape);
-			int current_cost = current.cost;
-			
-			boolean dontExpand = false;
-			
-			if(current.lvl == curMaxLvl){
-				dontExpand = true;
-				maxLvlReached = true;
+		return randomGrid;
+	}
+	
+	/*================================================
+	Search(Grid , Strategy , Visualize)
+	Purpose: Searches through the given grid using the
+	passed strategy.
+	Usage:
+ 	Search(grid, {"BF|DF|ID|AS1|AS2|GR1|GR2"},{'t|f'})
+ 	
+	
+	================================================*/
+	public static void Search(Grid grid, String Strategy, char visualize){
+		if (Strategy.equals("BF")){
+			state start = new state(grid.grid, 0, 0);
+			int ret = bfs(start,visualize);
+			if (ret == -1){
+				System.out.println("No Solution found");
 			}
-			
-			if (is_target(current)) {
-				return current_cost;
+		}
+		if (Strategy.equals("DF")){
+			state start = new state(grid.grid, 0, 0);
+			int ret = dfs(start,visualize);
+			if (ret == -1){
+				System.out.println("No Solution found");
 			}
-			
-			if (vis.contains(grid_shape))
-				dontExpand = true;
-			vis.add(grid_shape);
-			
-			if(!dontExpand){
-				new_states = move(current);
-				for (state s : new_states)
-					dfs_stack.push(s);
+		}
+		if (Strategy.equals("ID")){
+			state start = new state(grid.grid, 0, 0);
+			int ret = iterative(start,visualize);
+			if (ret == -1){
+				System.out.println("No Solution found");
 			}
-			
-			if(dfs_stack.isEmpty()){
-				if(!maxLvlReached)
-					return -1;
-				maxLvlReached = false;
-				dfs_stack = new Stack<state>();
-				dfs_stack.push(start);
-				vis = new HashSet<String>();
-				curMaxLvl++;
+		}
+		if (Strategy.equals("GR1")){
+			state start = new state(grid.grid, 0, 0);
+			int ret = greedy(start,Strategy,visualize);
+			if (ret == -1){
+				System.out.println("No Solution found");
+			}
+		}
+		if (Strategy.equals("GR2")){
+			state start = new state(grid.grid, 0, 0);
+			int ret = greedy(start,Strategy,visualize);
+			if (ret == -1){
+				System.out.println("No Solution found");
+			}
+		}
+		if (Strategy.equals("AS1")){
+			state start = new state(grid.grid, 0, 0);
+			int ret = aStar(start,Strategy,visualize);
+			if (ret == -1){
+				System.out.println("No Solution found");
+			}
+		}
+		if (Strategy.equals("AS2")){
+			state start = new state(grid.grid, 0, 0);
+			int ret = aStar(start,Strategy,visualize);
+			if (ret == -1){
+				System.out.println("No Solution found");
 			}
 		}
 	}
-	
-	// ..#.
-	// r..#
-	// #...
-	// .r#.
+
 	public static void main(String[] args) throws Exception {
-		char[][] test_board = new char[4][4];
-		test_board[0][0] = '.';
-		test_board[0][1] = '.';
-		test_board[0][2] = '.';
-		test_board[0][3] = '.';
-		test_board[1][0] = 'r';
-		test_board[1][1] = '.';
-		test_board[1][2] = 'r';
-		test_board[1][3] = '.';
-		test_board[2][0] = '.';
-		test_board[2][1] = '.';
-		test_board[2][2] = '.';
-		test_board[2][3] = '.';
-		test_board[3][0] = 'r';
-		test_board[3][1] = '.';
-		test_board[3][2] = '.';
-		test_board[3][3] = '.';
-		display(test_board);
-		Grid test = new Grid();
-		test.display();
-		System.out.println();
-		System.out.println("=====================");
-		state start = new state(test.grid, 0, 0);
-		System.out.println(test.grid[0][0]);
-		int ans = bfs(start);
-		System.out.println("Original Grid:");
-		display(test.grid);
-		System.out.println("total cost = " + ans);
+
+		Grid z = GenGrid("-vv");
+		Search(z,"AS2",'t');
+
+
 	}
 }

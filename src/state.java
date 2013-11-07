@@ -3,6 +3,7 @@ class state {
 	int cost;
 	int lvl;
 	int numberOfParts;
+	public static int nodeNumber;
 
 	int heuristic;
 	public state(char[][] grid, int cost, int lvl  ) {
@@ -10,6 +11,7 @@ class state {
 		this.cost = cost;
 		this.lvl = lvl;
 		this.numberOfParts = this.setNumberOfParts();
+		nodeNumber++;
 	}
 
 	public String toString() {
@@ -27,6 +29,7 @@ class state {
 					++count;
 		return count;
 	}
+	
 	public void partAttached(){
 		numberOfParts-- ;
 	}
