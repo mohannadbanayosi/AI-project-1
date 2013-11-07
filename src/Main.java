@@ -10,14 +10,6 @@ import java.util.Stack;
 public class Main {
 	static int dx[] = new int[] { 1, -1, 0, 0 };
 	static int dy[] = new int[] { 0, 0, 1, -1 };
-
-//	public static boolean is_target(state x) {
-//		int count = x.numberOfParts();
-//		System.out.println("*********************************************");
-//		System.out.println(count);
-//		System.out.println("*********************************************");
-//		return count == 1 ? true : false;
-//	}
 	
 	public static boolean is_target(state x) {
 		char[][] grid = x.grid;
@@ -29,7 +21,7 @@ public class Main {
 					for (int count = 0; count < connected_parts.size(); ++count) {
 						for (int k = 0; k < 4; ++k) {
 							try{
-								if(grid[connected_parts.get(count).x + dx[k]][connected_parts.get(count).y + dy[k]] == 'r') {
+								if(grid[connected_parts.get(count).x + dx[k]][connected_parts.get(count).y + dy[k]] == 'r') {// checks if there is any neighbor part
 									boolean found = false;
 									for (int p = 0; p < connected_parts.size(); ++p) {
 										if ((connected_parts.get(p).x == connected_parts.get(count).x + dx[k]) && (connected_parts.get(p).y == connected_parts.get(count).y + dy[k])) {
@@ -38,7 +30,7 @@ public class Main {
 										}
 									}
 									if(!found) {
-										connected_parts.add(new Point(connected_parts.get(count).x + dx[k], connected_parts.get(count).y + dy[k]));
+										connected_parts.add(new Point(connected_parts.get(count).x + dx[k], connected_parts.get(count).y + dy[k]));// adds the part to the array of connected parts
 									}
 								}
 							}
@@ -54,7 +46,6 @@ public class Main {
 								count++;
 					System.out.println("Number of parts");
 					System.out.println(count);
-//					if (connected_parts.size() == x.numberOfParts()) {
 					if (connected_parts.size() == count) {
 						System.out.println("Done :");
 						display(x.grid);
@@ -69,7 +60,7 @@ public class Main {
 		return true;
 	}
 	
-	public static void display(char [][] grid){
+	public static void display(char [][] grid){// displays the grid
 		for (int i =0 ; i < grid.length; i++){
 			System.out.println();
 			for (int j = 0; j < grid[i].length; j++){
@@ -118,26 +109,6 @@ public class Main {
 					for (int k = 0; k < 4; ++k) {// loop on direction
 						int curi = i, curj = j;
 						int cost = 0;
-//						for (int l = 0; l < 4; ++l) {
-//							try{
-//								if(grid[curi + dx[k]][curj + dy[k]] == 'r') {
-//									boolean found = false;
-//									for (int p = 0; p < connected_parts.size(); ++p) {
-//										if (connected_parts.get(p).x == curi + dx[k] && connected_parts.get(p).y == curj + dy[k]) {
-//											found = true;
-//											break;
-//										}
-//									}
-//									if(!found) {
-//										connected_parts.add(new Point(curi + dx[k], curj + dy[k]));
-//										connected_parts_old.add(new Point(curi + dx[k], curj + dy[k]));
-//									}
-//								}
-//							}
-//							catch (Exception e){
-//								
-//							}
-//						}
 						if (connected_parts.size() != 1) {
 							boolean running = true;
 							while(running) {
@@ -168,7 +139,6 @@ public class Main {
 								cost++;
 							}
 						}
-						//System.out.println("cost" +cost);
 						if (curi + dx[k] < 0 || curi + dx[k] >= grid.length || curj + dy[k] < 0|| curj + dy[k] >= grid[0].length)
 							continue;
 						char nxt = grid[curi + dx[k]][curj + dy[k]];
@@ -569,10 +539,11 @@ public class Main {
 		test.display();
 		System.out.println();
 		System.out.println("=====================");
-		state start = new state(test_board, 0, 0);
+		state start = new state(test.grid, 0, 0);
 		System.out.println(test.grid[0][0]);
 		int ans = bfs(start);
-
+		System.out.println("Original Grid:");
+		display(test.grid);
 		System.out.println("total cost = " + ans);
 	}
 }
