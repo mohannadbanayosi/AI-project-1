@@ -238,13 +238,11 @@ public class Main {
 		bfs_queue.offer(start);
 		HashSet<String> vis = new HashSet<String>();
 		ArrayList<String> nodes = new ArrayList<String>();
-		int cost = 0;
 		while (!bfs_queue.isEmpty()) {
 			state current = bfs_queue.poll();
 			String grid_shape = current.toString();
 			if (is_target(current)) {
-				int current_cost = current.cost;
-				cost += current_cost;
+
 				System.out.println("*****************GOAL****************");
 				System.out.println(current.nodeNumber);
 				display(current.grid);
@@ -252,19 +250,19 @@ public class Main {
 				displayNodes(nodes);
 				System.out.println("*****************GOAL****************");
 				System.out.println("*****************Cost****************");
-				System.out.println("Total Cost: " + cost);
+				System.out.println("Total Cost: " + current.cost);
 				System.out.println("*************************************");
-				return cost;
+				return current.cost;
 			}
 			if (vis.contains(grid_shape))
 				continue;
-			int current_cost = current.cost;
-			cost += current_cost;
 			vis.add(grid_shape);
-			nodes.add(current.nodeNumber + "");
+			nodes.add( current.nodeNumber + "");
 			if (visualize == 't') {
 				System.out.println("*********************************************");
-				System.out.println(current.nodeNumber);
+				System.out.println("Node Number" +current.nodeNumber);
+				System.out.println("current cost" +current.cost);
+				
 				display(current.grid);
 			}
 			// moves
@@ -282,14 +280,11 @@ public class Main {
 		dfs_stack.push(start);
 		HashSet<String> vis = new HashSet<String>();
 		ArrayList<String> nodes = new ArrayList<String>();
-		int cost = 0;
 		while (!dfs_stack.isEmpty()) {
 			state current = (state) dfs_stack.pop();
 			String grid_shape = current.toString();	
 			
 			if (is_target(current)) {
-				int current_cost = current.cost;
-				cost += current_cost;
 				System.out.println("*****************GOAL****************");
 				System.out.println(current.nodeNumber);
 				display(current.grid);
@@ -297,18 +292,18 @@ public class Main {
 				displayNodes(nodes);
 				System.out.println("*****************GOAL****************");
 				System.out.println("*****************Cost****************");
-				System.out.println("Total Cost: " + cost);
+				System.out.println("Total Cost: " + current.cost);
 				System.out.println("*************************************");
-				return cost;
+				return current.cost;
 			}
 			if (vis.contains(grid_shape))
 				continue;
-			int current_cost = current.cost;
-			cost += current_cost;
+
 			nodes.add(current.nodeNumber + "");
 			if (visualize == 't') {
 				System.out.println("*********************************************");
-				System.out.println(current.nodeNumber);
+				System.out.println("Node Number" +current.nodeNumber);
+				System.out.println("current cost" +current.cost);
 				display(current.grid);
 			}
 			vis.add(grid_shape);
@@ -328,7 +323,6 @@ public class Main {
 		uniformQ.add(start);
 		HashSet<String> vis = new HashSet<String>();
 		ArrayList<String> nodes = new ArrayList<String>();
-		int cost = 0;
 		while (!uniformQ.isEmpty()) {
 			//get the index of the state with minimum cost
 			int minCost = 0;
@@ -344,8 +338,7 @@ public class Main {
 			//System.out.println(grid_shape);
 			
 			if (is_target(current)) {
-				int current_cost = current.cost;
-				cost += current_cost;
+
 				System.out.println("*****************GOAL****************");
 				System.out.println(current.nodeNumber);
 				display(current.grid);
@@ -353,18 +346,18 @@ public class Main {
 				displayNodes(nodes);
 				System.out.println("*****************GOAL****************");
 				System.out.println("*****************Cost****************");
-				System.out.println("Total Cost: " + cost);
+				System.out.println("Total Cost: " + current.cost);
 				System.out.println("*************************************");
-				return cost;
+				return current.cost;
 			}
 			if (vis.contains(grid_shape))
 				continue;
-			int current_cost = current.cost;
-			cost += current_cost;
+
 			nodes.add(current.nodeNumber + "");
 			if (visualize == 't') {
 				System.out.println("*********************************************");
-				System.out.println(current.nodeNumber);
+				System.out.println("Node Number" +current.nodeNumber);
+				System.out.println("current cost" +current.cost);
 				display(current.grid);
 			}
 			vis.add(grid_shape);
@@ -387,7 +380,6 @@ public class Main {
 		dfs_stack.push(start);
 		HashSet<String> vis = new HashSet<String>();
 		ArrayList<String> nodes = new ArrayList<String>();
-		int cost = 0;
 		ArrayList<state> new_states = new ArrayList<state>();
 		
 		boolean maxLvlReached = false;
@@ -404,8 +396,7 @@ public class Main {
 			}
 			
 			if (is_target(current)) {
-				int current_cost = current.cost;
-				cost += current_cost;
+
 				System.out.println("*****************GOAL****************");
 				System.out.println(current.nodeNumber);
 				display(current.grid);
@@ -413,20 +404,20 @@ public class Main {
 				displayNodes(nodes);
 				System.out.println("*****************GOAL****************");
 				System.out.println("*****************Cost****************");
-				System.out.println("Total Cost: " + cost);
+				System.out.println("Total Cost: " + current.cost);
 				System.out.println("*************************************");
-				return cost;
+				return current.cost;
 			}
 			
 			if (vis.contains(grid_shape))
 				dontExpand = true;
 			vis.add(grid_shape);
-			int current_cost = current.cost;
-			cost += current_cost;
+
 			nodes.add(current.nodeNumber + "");
 			if (visualize == 't') {
 				System.out.println("*********************************************");
-				System.out.println(current.nodeNumber);
+				System.out.println("Node Number" +current.nodeNumber);
+				System.out.println("current cost" +current.cost);
 				display(current.grid);
 			}
 			
@@ -456,19 +447,17 @@ public class Main {
 		}
 		if (heuristic.equals("GR2")) {
 			state.heuristic = heurstic2(state.grid);
-			}
+		}
 		priorityQueue.add(state);
 		HashSet<String> vis = new HashSet<String>();
 		ArrayList<String> nodes = new ArrayList<String>();
-		int cost = 0;
 		while(!priorityQueue.isEmpty()){
 			int currentIndex = bestOptionGreedy(priorityQueue);
 			state current = priorityQueue.get(currentIndex);
 			priorityQueue.remove(currentIndex);
 			
 			if(is_target(current)){
-				int current_cost = current.cost;
-				cost += current_cost;
+
 				System.out.println("*****************GOAL****************");
 				System.out.println(current.nodeNumber);
 				display(current.grid);
@@ -476,19 +465,19 @@ public class Main {
 				displayNodes(nodes);
 				System.out.println("*****************GOAL****************");
 				System.out.println("*****************Cost****************");
-				System.out.println("Total Cost: " + cost);
+				System.out.println("Total Cost: " + current.cost);
 				System.out.println("*************************************");
-				return cost;
+				return current.cost;
 			}
 			String gridShape = current.toString();
 			if (vis.contains(gridShape))
 				continue;
-			int current_cost = current.cost;
-			cost += current_cost;
+
 			nodes.add(current.nodeNumber + "");
 			if (visualize == 't') {
 				System.out.println("*********************************************");
-				System.out.println(current.nodeNumber);
+				System.out.println("Node Number" +current.nodeNumber);
+				System.out.println("current cost" +current.cost);
 				System.out.println("Heuristic:  "  + current.heuristic);
 				display(current.grid);
 			}
@@ -523,15 +512,13 @@ public class Main {
 		priorityQueue.add(state);
 		HashSet<String> vis = new HashSet<String>();
 		ArrayList<String> nodes = new ArrayList<String>();
-		int cost = 0;
 		while(!priorityQueue.isEmpty()){
 			int currentIndex = bestOptionAStar(priorityQueue);
 			state current = priorityQueue.get(currentIndex);
 			priorityQueue.remove(currentIndex);
 			;
 			if(is_target(current)){
-				int current_cost = current.cost;
-				cost += current_cost;
+
 				System.out.println("*****************GOAL****************");
 				System.out.println(current.nodeNumber);
 				display(current.grid);
@@ -539,20 +526,20 @@ public class Main {
 				displayNodes(nodes);
 				System.out.println("*****************GOAL****************");
 				System.out.println("*****************Cost****************");
-				System.out.println("Total Cost: " + cost);
+				System.out.println("Total Cost: " + current.cost);
 				System.out.println("*************************************");
-				return cost;
+				return current.cost;
 			}
 
 			String gridShape = current.toString();
 			if (vis.contains(gridShape))
 				continue;
-			int current_cost = current.cost;
-			cost += current_cost;
 			nodes.add(current.nodeNumber + "");
 			if (visualize == 't') {
 				System.out.println("*********************************************");
 				System.out.println(current.nodeNumber);
+				System.out.println("Node Number" +current.nodeNumber);
+				System.out.println("current cost" +current.cost);
 				System.out.println("Heuristic:  "  + current.heuristic);
 				display(current.grid);
 			}
@@ -800,6 +787,7 @@ public class Main {
 
 		Grid z = GenGrid("-vv");
 		Search(z,"AS2",'t');
+//		display(z.grid);
 
 
 	}
