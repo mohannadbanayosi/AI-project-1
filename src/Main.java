@@ -12,7 +12,7 @@ public class Main {
 	static int dy[] = new int[] { 0, 0, 1, -1 };
 	
 	
-	/*=========================================
+	/*========================================
 	 				is_target(state)
 	 Method used to check whether the state is 
 	 a goal state.
